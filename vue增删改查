@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vue</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div id="app">
+    
+    <div class="panel panel-primary">
+          <div class="panel-heading">
+                <h3 class="panel-title">添加品牌</h3>
+          </div>
+          <div class="panel-body form-inline">
+              <label>
+                 id:
+                 <input type="text" class="form-control" v-model="id">
+              </label>
+              <label>
+                  name:
+                  <input type="text" class="form-control" v-model="name"  @keyup.enter="add">
+              </label>
+                <input type="button" value="添加" class="btn btn-primary" @click="add">  
+                <label>搜索关键字:<input type="text" class="form-control" v-model="keywords" v-focus></label>          
+          </div>
+    </div>
+    
+    <table class="table table-bordered table-hover table-st">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>ctime</th>
+            <th>operation</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in search(keywords)" :key="item.id">
+            <td>{{item.id}}</td>
+            <td>{{item.name}}</td>
+            <td>{{item.ctime|dateFormat('')}}</td>
+            <td><a href=""@click.prevent="del(item.id)">delete</a> </td>
+        </tr>
+
+        </tbody>
+
+
+    </table>
+
+ 
+</div>
+<script>
+Vue.filter('dateFormat',function(dataStr,pattern){
+    var dt=new Date(dataStr);
+    var y=dt.getFullYear();
+    var m=(dt.getMonth()+1).toString().padStart(2,'0');
+    var d=dt.getDate().toString().padStart(2,'0');
+   
+    if(pattern.toLowerCase()==='yyyy-mmm-dd'){
+        return `${y}-${m}-${d}`
+    }
+    else{
+        var hh=dt.getHours().toString().padStart(2,'0');
+        var mm=dt.getMinutes().toString().padStart(2,'0');
+        var ss=dt.getSeconds().toString().padStart(2,'0');
+        return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+    }
+});
+        Vue.directive('focus',{
+            bind:function(el){
+                 el.focus();
+            },
+            inserted:function(el){
+                el.focus();
+
+            },
+            updated:function(el){
+            el.focus();
+            }
+
+
+        })
+
+
+
+   var vm=new Vue({
+          el:'#app',
+       data:{
+     list:[
+         {id:1,name:'奔驰',ctime:new Date()},
+         {id:2,name:'李四',ctime:new Date()},
+         {id:3,name:'王武',ctime:new Date()},
+     ],
+     id:'',
+     name:'',
+     keywords:''
+       },
+       methods:{
+     add(){//添加的方法
+
+     var car={id: this.id,name:this.name,ctime:new Date()}
+     this.list.push(car)
+     this.id=''
+     this.name=''
+     },
+    del(id){
+//根据id ，要找到这个删除这一项的索引
+//如果找到了索引，直接调用数组的splices
+//       this.list.some((item,i)=>{
+ //           if(item.id==id){
+ //               this.list.splice(i,1)
+ //               return true;
+  // })
+    var index=this.list.findIndex(       
+    item=>{
+     if(item.id==id){
+        return true;
+      }
+
+  }
+//({id})=>{
+   // if(id==id){
+     //   return true;
+   // }
+//}
+  )
+    this.list.splice(index,1);
+
+
+},
+search(keywords){
+    var newList=[];
+    this.list.forEach(item=>{
+     if(item.name.indexOf(keywords)!=-1){
+         newList.push(item)
+     }
+
+
+    })
+         return newList;
+
+}
+
+       }
+
+
+
+      })
+
+
+</script>
+</body>
+</html>
